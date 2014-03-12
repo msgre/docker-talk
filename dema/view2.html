@@ -1,0 +1,35 @@
+<!doctype html>
+<html>
+<head>
+    <meta charset="utf-8" />
+    <title>Demo 5 / Propojení modelu a view / Backbone.js</title>
+    <script type="text/javascript" src="js/jquery-2.0.3.min.js"></script>
+    <script type="text/javascript" src="js/underscore.js"></script>
+    <script type="text/javascript" src="js/backbone.js"></script>
+</head>
+<body>
+    <h1>Demo 5 / Propojení modelu a view / Backbone.js</h1>
+    <div id="library"></div>
+
+    <script type="text/javascript">
+        var Book, model, LibraryView, view;
+        $(document).ready(function(){
+            Book = Backbone.Model.extend();
+            model = new Book({title: 'Honzíkova cesta', author: 'Bohumil Říha'});
+
+            LibraryView = Backbone.View.extend({
+              el: '#library',
+              initialize: function(options) {
+                this.model.on('change', function(){this.render()}, this);
+              },
+              render: function() {
+                this.$el.html('<p>'+this.model.get('title')+' ('+this.model.get('author')+')</p>');
+                return this;
+              }
+            });
+            view = new LibraryView({model: model});
+            view.render();
+        });
+    </script>
+</body>
+</html>

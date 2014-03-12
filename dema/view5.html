@@ -1,0 +1,55 @@
+<!doctype html>
+<html>
+<head>
+    <meta charset="utf-8" />
+    <title>Demo 9 / View pro zobrazení (nejen) kolekce / Marionette.js</title>
+    <style>
+        li {padding:4px 8px; cursor: pointer;}
+    </style>
+    <script type="text/javascript" src="js/jquery-2.0.3.min.js"></script>
+    <script type="text/javascript" src="js/underscore.js"></script>
+    <script type="text/javascript" src="js/backbone.js"></script>
+    <script type="text/javascript" src="js/backbone.marionette.js"></script>
+    <script type="text/javascript" src="js/backbone.babysitter.js"></script>
+    <script type="text/javascript" src="js/backbone.wreqr.js"></script>
+</head>
+<body>
+    <h1>Demo 9 / View pro zobrazení (nejen) kolekce / Marionette.js</h1>
+    <div id="library"></div>
+
+    <script type="text/javascript">
+        var Book, Library, collection, BookView, CollectionBookView, view;
+
+        $(document).ready(function(){
+            // model
+            Book = Backbone.Model.extend();
+
+            // kolekce
+            Library = Backbone.Collection.extend({
+                model: Book,
+                url: '../dema/data.json'
+            });
+            collection = new Library();
+            collection.fetch();
+
+            // view
+            BookView = Backbone.Marionette.ItemView.extend({
+                tagName: 'li',
+                template: _.template('<strong><%= title %></strong> (<%= author %>)')
+            });
+            CompositeBookView = Backbone.Marionette.CompositeView.extend({
+                el: '#library',
+                itemView: BookView,
+                itemViewContainer: 'ul',
+                template: _.template('<h3>V roce <%= today.getFullYear() %> děckám určitě kupte:</h3><ul></ul><p>Garantujeme, že zakoupením kterékoliv z knih neprohloupíte!</p>')
+            });
+
+            view = new CompositeBookView({
+                collection: collection, 
+                model: new Backbone.Model({today: new Date()})
+            });
+            view.render();
+        });
+    </script>
+</body>
+</html>

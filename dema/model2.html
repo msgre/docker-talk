@@ -1,0 +1,35 @@
+<!doctype html>
+<html>
+<head>
+    <meta charset="utf-8" />
+    <title>Demo 2 / Backbone.Collection / Backbone.js</title>
+    <script type="text/javascript" src="js/jquery-2.0.3.min.js"></script>
+    <script type="text/javascript" src="js/underscore.js"></script>
+    <script type="text/javascript" src="js/backbone.js"></script>
+</head>
+<body>
+    <h1>Demo 2 / Backbone.Collection</h1>
+    <div id="book"></div>
+
+    <script type="text/javascript">
+        var Book, Library, model1, model2, model3, collection;
+        $(document).ready(function(){
+            // definice modelu
+            Book = Backbone.Model.extend();
+
+            // definice kolekce nad modelem
+            Library = Backbone.Collection.extend({
+              model: Book
+            });
+
+            // instance
+            model1 = new Book({title: 'Honzíkova cesta', author: 'Bohumil Říha'});
+            model2 = new Book({title: 'Čuk a Gek', author: 'Arkadij Gajdar'});
+            model3 = new Book({title: 'Malý Bobeš', author: 'Josef Věromír Pleva'});
+            collection = new Library([model1, model2, model3]);
+        });
+    </script>
+</body>
+</html>
+
+

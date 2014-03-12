@@ -1,0 +1,103 @@
+<!doctype html>
+<html>
+<head>
+    <meta charset="utf-8" />
+    <title>Demo 7 / Kompletní aplikace / Backbone.js</title>
+    <style>
+        .active {background-color:#333; color: #ddd;}
+        li {padding:4px 8px; cursor: pointer;}
+    </style>
+    <script type="text/javascript" src="js/jquery-2.0.3.min.js"></script>
+    <script type="text/javascript" src="js/underscore.js"></script>
+    <script type="text/javascript" src="js/backbone.js"></script>
+</head>
+<body>
+    <h1>Demo 7 / Kompletní aplikace / Backbone.js</h1>
+    <ul id="library"></ul>
+
+    <script type="text/javascript">
+        var Book, model1, model2, model3, Library, router, collection, router, view;
+
+        $(document).ready(function(){
+            // model
+            Book = Backbone.Model.extend({
+                initialize: function() {
+                    this.on('change:active', function(model){
+                        if (model.get('active') == true) {
+                            router.navigate("activate/" + model.get('id'));
+                        }
+                    });
+                }
+            });
+
+            model1 = new Book({id: 1, title: 'Honzíkova cesta', author: 'Bohumil Říha', active: false});
+            model2 = new Book({id: 2, title: 'Čuk a Gek', author: 'Arkadij Gajdar', active: false});
+            model3 = new Book({id: 3, title: 'Malý Bobeš', author: 'Josef Věromír Pleva', active: false});
+
+            // kolekce
+            Library = Backbone.Collection.extend({
+                model: Book,
+                set_active: function (id) {
+                    // stary aktivni prvek pryc
+                    old_active = this.filter(function(d) {return (d.get('active') && d.get('id') != id)});
+                    _.each(old_active, function(d) {d.set('active', false)});
+
+                    // novy aktivni
+                    model = _.first(this.filter(function(d){return d.get('id') == id}));
+                    model.set('active', true);
+
+                    return model;
+                }
+            });
+
+            collection = new Library([model1, model2, model3]);
+
+            // collection view
+            CollectionBookView = Backbone.View.extend({
+                el: '#library',
+                tagName: 'ul',
+                template: _.template('<% _.each(collection, function(m) {%><li data-id="<%= m.id %>" <% if (m.active) { %> class="active"<% } %>><strong><%= m.title %></strong> (<%= m.author %>)</li><% }) %>'),
+                events: {
+                    "click li": "activate",
+                },
+
+                initialize: function(options) {
+                    this.collection = options.collection;
+                    this.listenTo(this.collection, "add remove", this.render);
+                    var that = this;
+                    this.collection.on("change", function(){return that.render()});
+                },
+                render: function() {
+                    this.$el.html(this.template({collection: this.collection.toJSON()}));
+                    return this;
+                },
+                activate: function(el) {
+                    var id = $(el.currentTarget).attr('data-id');
+                    this.collection.set_active(id);
+                }
+            });
+
+            view = new CollectionBookView({collection: collection});
+            view.render();
+
+            // router
+            var Router = Backbone.Router.extend({
+                routes: {
+                    "activate/:id":  "activate"
+                },
+                initialize: function(options) {
+                    this.collection = options.collection;
+                },
+                activate: function(id) {
+                    this.collection.set_active(id);
+                }
+            });
+
+            router = new Router({collection: collection});
+
+            // history API
+            Backbone.history.start();
+        });
+    </script>
+</body>
+</html>

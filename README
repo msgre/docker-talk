@@ -1,0 +1,3 @@
+Lehky uvod do Dockeru, slajdy z breznovych Tkalcu na webu (http://srazy.info/tkalci-na-webu/4360).
+
+Jak rozjet slajdy a demo (unix like systemy): v root adresari (tam kde je index.html) spustit: python -m SimpleHTTPServer a pak dat do prohlizece adresu http://localhost:8000/

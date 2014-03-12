@@ -1,0 +1,50 @@
+<!doctype html>
+<html>
+<head>
+    <meta charset="utf-8" />
+    <title>Demo 8 / View pro zobrazení kolekce / Marionette.js</title>
+    <style>
+        li {padding:4px 8px; cursor: pointer;}
+    </style>
+    <script type="text/javascript" src="js/jquery-2.0.3.min.js"></script>
+    <script type="text/javascript" src="js/underscore.js"></script>
+    <script type="text/javascript" src="js/backbone.js"></script>
+    <script type="text/javascript" src="js/backbone.marionette.js"></script>
+    <script type="text/javascript" src="js/backbone.babysitter.js"></script>
+    <script type="text/javascript" src="js/backbone.wreqr.js"></script>
+</head>
+<body>
+    <h1>Demo 8 / View pro zobrazení kolekce / Marionette.js</h1>
+    <ul id="library"></ul>
+
+    <script type="text/javascript">
+        var Book, Library, collection, BookView, CollectionBookView, view;
+
+        $(document).ready(function(){
+            // model
+            Book = Backbone.Model.extend();
+
+            // kolekce
+            Library = Backbone.Collection.extend({
+                model: Book,
+                url: '../dema/data.json'
+            });
+            collection = new Library();
+            collection.fetch();
+
+            // view
+            BookView = Backbone.Marionette.ItemView.extend({
+                tagName: 'li',
+                template: _.template('<strong><%= title %></strong> (<%= author %>)')
+            });
+            CollectionBookView = Backbone.Marionette.CollectionView.extend({
+                el: '#library',
+                itemView: BookView
+            });
+
+            view = new CollectionBookView({collection: collection});
+            view.render();
+        });
+    </script>
+</body>
+</html>

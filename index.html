@@ -1,0 +1,391 @@
+<!doctype html>
+<html lang="en">
+
+    <head>
+        <meta charset="utf-8">
+
+        <title>Docker</title>
+
+        <meta name="apple-mobile-web-app-capable" content="yes" />
+        <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+
+        <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+
+        <link rel="stylesheet" href="css/reveal.min.css">
+        <link rel="stylesheet" href="css/theme/default.css" id="theme">
+
+        <!-- For syntax highlighting -->
+        <link rel="stylesheet" href="plugin/highlight/styles/github.css">
+
+        <style>
+.strikeout {
+    position: relative;
+}
+.strikeout::after {
+    border-bottom: 10px solid #000;
+    content: "";
+    left: 35%;
+    position: absolute;
+    right: 36%;
+    top: 60%;
+}
+
+            pre code {
+                font-size: 120%;
+            }
+            .no-highlight {
+                color:#777;
+                font-weight:bold;
+            }
+            .circle {
+                display:inline-block;
+                width:150px;
+                height:150px;
+                -webkit-border-radius:100px;
+                border-radius:100px;
+                background:black;
+                color:white;
+            }
+            .reveal pre {
+                box-shadow:none;
+                width:100%;
+            }
+            .reveal pre code {
+                padding-left:1em;
+                padding-right:1em;
+            }
+            .reveal .model pre code {
+                background-color: #CBEFF3;
+            }
+            .reveal .model a {
+                color: #CBEFF3;
+            }
+            .reveal .view pre code {
+                background-color: #FFE6B2;
+            }
+            .reveal .view a {
+                color: #FFE6B2;
+            }
+            .reveal .events pre code {
+                background-color: #A7F0B7;
+            }
+            .reveal .events a {
+                color: #A7F0B7;
+            }
+            .reveal .controller pre code {
+                background-color: #FFB6B2;
+            }
+            .reveal .controller a {
+                color: #FFB6B2;
+            }
+        </style>
+
+        <!-- If the query includes 'print-pdf', use the PDF print sheet -->
+        <script>
+            document.write( '<link rel="stylesheet" href="css/print/' + ( window.location.search.match( /print-pdf/gi ) ? 'pdf' : 'paper' ) + '.css" type="text/css" media="print">' );
+        </script>
+
+        <!--[if lt IE 9]>
+        <script src="lib/js/html5shiv.js"></script>
+        <![endif]-->
+    </head>
+
+    <body>
+
+        <div class="reveal">
+
+            <!-- Any section element inside of this container is displayed as a slide -->
+            <div class="slides">
+                <section>
+                    <img src="img/docker.png" style="border:none; box-shadow:none; height:360px" />
+                    <p>
+                        <br>
+                        <small>Povídání pro <a href="http://tkalci.cz/">Tkalce na webu</a> &mdash; <a href="mailto:michal@plovarna.cz">Michal Valoušek</a> &mdash; <a href="http://twitter.com/msgre">@msgre</a><br><br>
+                        <a href="https://github.com/msgre/backbone-talk">https://github.com/msgre/docker-talk</a></small>
+                    </p>
+                </section>
+
+                <section>
+                    <q>
+                        Docker is an open-source project to easily create lightweight, portable, self-sufficient containers from any application.
+                    </q>
+                    <aside class="notes">
+                    </aside>
+                </section>
+
+                <section>
+                    <img src="img/doprava.png" style="border:none; box-shadow:none; height:100%" />
+                </section>
+
+                <section>
+                    <img src="img/sw.png" style="border:none; box-shadow:none; height:100%" />
+                </section>
+
+                <section>
+                    <img src="img/kontos.png" style="border:none; box-shadow:none; height:100%" />
+
+                    <aside class="notes">
+                        kontejnery -- unifikovany design, obsahujici cokoli, ktery se otevira az v cili<br>
+                        kazda aplikace jede ve svem izolovanem prostredi
+                    </aside>
+                </section>
+
+                <section>
+                    <img src="img/srovnani.jpg" style="border:none; box-shadow:none; width:120%" />
+                </section>
+
+                <section data-background="img/lenka.jpg">
+                    <h3><strong>Linux + VirtualBox + Vagrant + git</strong></h3>
+                    <aside class="notes">
+                        <p>
+                        LXC (LinuX Containers) is an operating system–level virtualization method for running multiple isolated Linux systems (containers) on a single control host.<br>
+                        AuFS (AnotherUnionFS) is a layered file system, so you can have a read only part, and a write part, and merge those together. So you could have the common parts of the operating system as read only, which are shared amongst all of your containers, and then give each container its own mount for writing.
+                        VirtualBox -- izolace.
+                        Vagrant -- zpusob ovladani VBoxu.
+                        git -- verzovani, repa.
+                        </p>
+                    </aside>
+                </section>
+
+                <section>
+                    <h3>„git“ (poprvé)</h3>
+                    <br>
+                    <pre><code class="bash">
+$ docker search ubuntu
+NAME                                      DESCRIPTION                                     STARS     OFFICIAL   TRUSTED
+ubuntu                                    General use Ubuntu base image. Tags availa...   108
+stackbrew/ubuntu                          Barebone ubuntu images                          34
+# ...
+                    </code></pre>
+
+                    <pre><code class="bash">
+$ docker pull ubuntu
+Pulling repository ubuntu
+5ac751e8d623: Download complete
+9cc9ea5ea540: Download complete
+# ...
+                    </code></pre>
+                    <aside class="notes">
+                        <p>
+                            typy repozitaru
+                        </p>
+                    </aside>
+                </section>
+
+                <section>
+                    <h3>Spuštění kontejneru z image</h2>
+                    <br>
+                    <pre><code class="bash">
+$ docker run ubuntu echo "hello world"
+hello world
+                    </code></pre>
+
+                    <pre><code class="bash">
+$ docker run -i -t ubuntu /bin/bash
+root@1d6a233e6896:/$
+root@1d6a233e6896:/$ apt-get install nginx
+Reading package lists... Done
+Building dependency tree... Done
+The following extra packages will be installed:
+  geoip-database libfreetype6 libgcrypt11 libgd2-noxpm libgeoip1 libgpg-error0 libjpeg-turbo8 libjpeg8 libxml2 libxslt1.1 nginx-common nginx-full sgml-base xml-core
+# ...
+                    </code></pre>
+                    <aside class="notes">
+                        <p>
+                            vysvetlit rozdil mezi image/kontejnerem
+                        </p>
+                    </aside>
+                </section>
+
+                <section>
+                    <h3>„git“ (podruhé)</h3>
+                    <br>
+                    <pre><code class="bash">
+$ docker commit 1d6a233e6896 msgre/pokus1
+1762b9c9158f402f33e7eba64a9a80bb87e4768996d6f8a7b6ea108147693e6c
+                    </code></pre>
+
+                    <pre><code class="bash">
+$ docker push msgre/pokus1
+The push refers to a repository [msgre/pokus1] (len: 1)
+Sending image list
+Pushing repository msgre/pokus1 (1 tags)
+511136ea3c5a: Image already pushed, skipping
+Image 6170bb7b0ad1 already pushed, skipping
+Image 9cd978db300e already pushed, skipping
+1762b9c9158f: Image successfully pushed
+Pushing tag for rev [1762b9c9158f] on {https://registry-1.docker.io/v1/repositories/msgre/pokus1/tags/latest}
+                    </code></pre>
+                </section>
+
+                <section>
+                    <h3>Dockerfile</h3>
+                    <br>
+                    <pre><code class="bash">
+FROM ubuntu
+
+MAINTAINER Victor Coisne victor.coisne@dotcloud.com
+
+RUN echo "deb http://archive.ubuntu.com/ubuntu precise main universe" > /etc/apt/sources.list
+RUN apt-get update
+
+RUN apt-get install -y memcached
+
+ENTRYPOINT ["memcached"]
+
+USER daemon
+
+EXPOSE 11211
+                    </code></pre>
+                    <aside class="notes">
+                        docker build -t memcached . # +2 dalsi zpusoby (stdin, github)<br>
+                        parametr -t hned build i pojmenuje (otaguje)<br>
+                        ADD (nakopiruje soubor dovnitr)<br>
+                    </aside>
+                </section>
+
+                <section>
+                    <h3>Propojení kontejnerů</h3>
+                    <br>
+                    <pre><code class="bash">
+# kontejner s Redisem
+$ docker run -d -name redis msgre/redis
+
+# kontejner s aplikaci
+$ docker run -t -i -link redis:db -name webapp ubuntu /bin/bash
+
+$ root@4c01db0b339c:/$ env
+# ...
+DB_PORT=tcp://172.17.0.8:6379
+DB_PORT_6379_TCP=tcp://172.17.0.8:6379
+DB_PORT_6379_TCP_PROTO=tcp
+DB_PORT_6379_TCP_ADDR=172.17.0.8
+DB_PORT_6379_TCP_PORT=6379
+                    </code></pre>
+                    <aside class="notes">
+                        docker build -t memcached . # +2 dalsi zpusoby (stdin, github)<br>
+                        parametr -t hned build i pojmenuje (otaguje)<br>
+                        ADD (nakopiruje soubor dovnitr)<br>
+                    </aside>
+                </section>
+
+
+                <section>
+                    <h3>Sdílení složek</h3>
+                    <br>
+                    <pre><code class="bash">
+# datovy kontejner
+$ docker run -v /var/volume1 -name DATA busybox true
+
+# pripojeni k datovemu kontejneru
+$ docker run -t -i -volumes-from DATA ubuntu /bin/bash
+                    </code></pre>
+
+                    <pre><code class="bash">
+# nasdileni slozky /var/logs dovnitr kontejneru
+$ sudo docker run -t -i -v /var/logs:/var/host_logs:ro ubuntu /bin/bash
+                    </code></pre>
+
+                    <aside class="notes">
+                        BusyBox provides several stripped-down Unix tools in a single executable file.<br>
+                        volumes nejsou soucasti commitu
+                    </aside>
+                </section>
+
+                <section data-background="img/toosad.jpg">
+                    <h1><strong style="text-shadow: 0px 0px 30px #fff;">POTÍŽE</strong></h1>
+                    <aside class="notes">
+                        pobrat to<br>
+                        jak navrhnout architekturu (nginx bude zvlast? jak skalovat pres vice stroju)<br/>
+                        cron<br>
+                        ssh<br>
+                        foreground<br>
+                    </aside>
+                </section>
+
+
+<!--
+!!!!!
+prolinkovani
+
+                    <p>
+                        docker images
+                        docker ps -a
+
+                        docker commit 553da16ca584 msgre/redis2
+                        docker push msgre/redis2
+                        docker run -d -p 6379 msgre/redis2 /usr/bin/redis-server
+
+                        docker run -i -t ubuntu /bin/bash
+                        apt-get install ipython python-pip
+                        pip install redis
+                    </p>
+-->
+                    <aside class="notes">
+                        <p>
+                            -i -t otevre terminal
+                        </p>
+                    </aside>
+                </section>
+
+
+                <section>
+                    <h3>Díky za pozornost</h3>
+
+                    <pre style="text-align:center">
+
+
+
+                  ##        .          
+            ## ## ##       ==          
+         ## ## ## ##      ===          
+     /""""""""""""""""\___/ ===        
+~~~ {~~ ~~~~ ~~~ ~~~~ ~~ ~ /  ===- ~~~ 
+     \______ o          __/            
+       \    \        __/               
+        \____\______/                  
+                    </pre>
+
+                </section>
+            </div>
+
+        </div>
+
+
+        <script src="lib/js/head.min.js"></script>
+        <script src="js/reveal.min.js"></script>
+        <script src="jquery.min.js"></script>
+
+        <script>
+
+            // Full list of configuration options available here:
+            // https://github.com/hakimel/reveal.js#configuration
+            Reveal.initialize({
+                controls: true,
+                progress: true,
+                history: true,
+                center: true,
+
+                theme: 'simple', // available themes are in /css/theme
+                transition: Reveal.getQueryHash().transition || 'linear', // default/cube/page/concave/zoom/linear/fade/none
+
+                // Optional libraries used to extend on reveal.js
+                dependencies: [
+                    { src: 'lib/js/classList.js', condition: function() { return !document.body.classList; } },
+                    { src: 'plugin/markdown/marked.js', condition: function() { return !!document.querySelector( '[data-markdown]' ); } },
+                    { src: 'plugin/markdown/markdown.js', condition: function() { return !!document.querySelector( '[data-markdown]' ); } },
+                    { src: 'plugin/highlight/highlight.js', async: true, callback: function() {
+                        $(document).ready(function(){
+                            $('code').each(function(i, e) {hljs.highlightBlock(e)});
+                        });
+                        //hljs.initHighlightingOnLoad();
+                    } },
+                    { src: 'plugin/zoom-js/zoom.js', async: true, condition: function() { return !!document.body.classList; } },
+                    { src: 'plugin/notes/notes.js', async: true, condition: function() { return !!document.body.classList; } }
+                ]
+            });
+
+        </script>
+
+    </body>
+</html>

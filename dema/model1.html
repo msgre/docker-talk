@@ -1,0 +1,25 @@
+<!doctype html>
+<html>
+<head>
+    <meta charset="utf-8" />
+    <title>Demo 1 / Backbone.Model / Backbone.js</title>
+    <script type="text/javascript" src="js/jquery-2.0.3.min.js"></script>
+    <script type="text/javascript" src="js/underscore.js"></script>
+    <script type="text/javascript" src="js/backbone.js"></script>
+</head>
+<body>
+    <h1>Demo 1 / Backbone.Model</h1>
+    <div id="book"></div>
+
+    <script type="text/javascript">
+        var Book, model;
+        $(document).ready(function(){
+            // definice modelu
+            Book = Backbone.Model.extend();
+
+            // instance
+            model = new Book({title: 'Honzíkova cesta', author: 'Bohumil Říha'});
+        });
+    </script>
+</body>
+</html>

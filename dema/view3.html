@@ -1,0 +1,51 @@
+<!doctype html>
+<html>
+<head>
+    <meta charset="utf-8" />
+    <title>Demo 6 / View pro zobrazení kolekce / Backbone.js</title>
+    <style>
+        li {padding:4px 8px; cursor: pointer;}
+    </style>
+    <script type="text/javascript" src="js/jquery-2.0.3.min.js"></script>
+    <script type="text/javascript" src="js/underscore.js"></script>
+    <script type="text/javascript" src="js/backbone.js"></script>
+</head>
+<body>
+    <h1>Demo 6 / View pro zobrazení kolekce / Backbone.js</h1>
+    <ul id="library"></ul>
+
+    <script type="text/javascript">
+        var Book, Library, collection, CollectionBookView, view;
+
+        $(document).ready(function(){
+            // model
+            Book = Backbone.Model.extend();
+
+            // kolekce
+            Library = Backbone.Collection.extend({
+                model: Book,
+                url: 'data.json'
+            });
+            collection = new Library();
+            collection.fetch();
+
+            // collection view
+            CollectionBookView = Backbone.View.extend({
+                el: '#library',
+                template: _.template('<% _.each(collection, function(m) { %><li><strong><%= m.title %></strong> (<%= m.author %>)</li><% }) %>'),
+
+                initialize: function(options) {
+                    this.collection.on("add remove", function(){this.render()}, this);
+                },
+                render: function() {
+                    this.$el.html(this.template({collection: this.collection.toJSON()}));
+                    return this;
+                },
+            });
+
+            view = new CollectionBookView({collection: collection});
+            view.render();
+        });
+    </script>
+</body>
+</html>

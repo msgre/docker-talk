@@ -1,0 +1,128 @@
+<!doctype html>
+<html>
+<head>
+    <meta charset="utf-8" />
+    <title>Demo 10 / Kompletní aplikace / Marionette.js</title>
+    <style>
+        .active {background-color:#333; color: #ddd;}
+        li {padding:4px 8px; cursor: pointer;}
+    </style>
+    <script type="text/javascript" src="js/jquery-2.0.3.min.js"></script>
+    <script type="text/javascript" src="js/underscore.js"></script>
+    <script type="text/javascript" src="js/backbone.js"></script>
+    <script type="text/javascript" src="js/backbone.marionette.js"></script>
+    <script type="text/javascript" src="js/backbone.babysitter.js"></script>
+    <script type="text/javascript" src="js/backbone.wreqr.js"></script>
+</head>
+<body>
+    <h1>Demo 10 / Kompletní aplikace / Marionette.js</h1>
+    <ul id="library"></ul>
+
+    <script type="text/javascript">
+        var Book, model1, model2, model3, Library, router, collection, router, view, BookView, CollectionBookView, Router;
+
+        $(document).ready(function(){
+            // model
+            Book = Backbone.Model.extend({
+                initialize: function() {
+                    this.on('change:active', function(model){
+                        // pokazde kdyz se model stane aktivnim aktualizujeme udaj v URL
+                        if (model.get('active') == true) {
+                            router.navigate("activate/" + model.get('id'));
+                        }
+                    });
+                }
+            });
+
+            model1 = new Book({id: 1, title: 'Honzíkova cesta', author: 'Bohumil Říha', active: false});
+            model2 = new Book({id: 2, title: 'Čuk a Gek', author: 'Arkadij Gajdar', active: false});
+            model3 = new Book({id: 3, title: 'Malý Bobeš', author: 'Josef Věromír Pleva', active: false});
+
+            // kolekce
+            Library = Backbone.Collection.extend({
+                model: Book,
+                set_active: function (id) {
+                    // stary aktivni prvek pryc
+                    old_active = this.filter(function(d) {return (d.get('active') && d.get('id') != id)});
+                    // NOTE: zajimavost -- d.set volame z nepovinnym option {silent:true}
+                    // to zpusobi, ze zmena na danych modelech neodpali event "change",
+                    // tj. aplikace na tuto zmenu nebude reagovat
+                    _.each(old_active, function(d) {d.set('active', false, {silent:true})});
+
+                    // novy aktivni
+                    model = _.first(this.filter(function(d){return d.get('id') == id}));
+                    // NOTE: tady uz set "change" event odpali (a v zavislosti na nej zareaguje view)
+                    model.set('active', true);
+
+                    return model;
+                }
+            });
+
+            collection = new Library([model1, model2, model3]);
+
+            // collection view
+            BookView = Backbone.Marionette.ItemView.extend({
+                tagName: 'li',
+                className: function () {
+                    // aktivni model bude mit nastaven class="active"
+                    return this.model.get('active') && 'active' || '';
+                },
+                template: _.template('<strong><%= title %></strong> (<%= author %>)'),
+                triggers: {
+                    // kliknuti na <li> zpusobi odpaleni udalosti 'activate-li' nad BookView
+                    'click': 'activate-li'
+                }
+            });
+
+            CollectionBookView = Backbone.Marionette.CollectionView.extend({
+                el: '#library',
+                itemView: BookView,
+                itemViewOptions: {
+                    attributes: function(a,b,c) {
+                        // udaj o ID prvku v kolekci dotlacime do BookView z tadyma
+                        return {
+                            'data-id': this.model.get('id')
+                        }
+                    }
+                },
+                initialize: function(options) {
+                    // obsluha kliknuti z detskeho (item) view
+                    this.on('itemview:activate-li', function(child_view){
+                        var id = child_view.$el.data('id');
+                        this.collection.set_active(id);
+                    });
+                    // zmena v nekterem z modelu kolekce znamena nutnost prekreslit view
+                    this.collection.on('change', this.render);
+                }
+            });
+
+            view = new CollectionBookView({collection: collection});
+            view.render();
+
+            // kontroler
+            var Controller = Marionette.Controller.extend({
+                initialize: function(options){
+                    this.collection = options.collection;
+                },
+                activate: function(id){
+                    this.collection.set_active(id);
+                }
+            });
+
+            controller = new Controller({collection: collection});
+
+            // routovani
+            Router = Backbone.Marionette.AppRouter.extend({
+                appRoutes: {
+                    "activate/:id":  "activate"
+                }
+            });
+
+            router = new Router({controller: controller});
+
+            // history API
+            Backbone.history.start();
+        });
+    </script>
+</body>
+</html>

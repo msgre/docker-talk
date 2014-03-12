@@ -1,0 +1,30 @@
+<!doctype html>
+<html>
+<head>
+    <meta charset="utf-8" />
+    <title>Demo 4 / Backbone.View / Backbone.js</title>
+    <script type="text/javascript" src="js/jquery-2.0.3.min.js"></script>
+    <script type="text/javascript" src="js/underscore.js"></script>
+    <script type="text/javascript" src="js/backbone.js"></script>
+</head>
+<body>
+    <h1>Demo 4 / Backbone.View / Backbone.js</h1>
+    <div id="library"></div>
+
+    <script type="text/javascript">
+        var LibraryView, view;
+        $(document).ready(function(){
+            var LibraryView = Backbone.View.extend({
+              el: '#library',
+              render: function() {
+                this.$el.html('<p>Knihovna u křupavého krabse</p>');
+                return this;
+              }
+            });
+
+            view = new LibraryView();
+            // view.render();
+        });
+    </script>
+</body>
+</html>
